@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+{% block title %}Flask Form Validation{% endblock %}
+
+{% block body %}
+    <main>
+        <div class="form-box">
+            <h1>Login Form</h1>
+            <form action="/login" method="POST">
+                <label for="username">Username</label>
+                <div class="f-alert">
+                    {% with invalidUsername = get_flashed_messages(category_filter=["invalidUsername"]) %}
+                        {% if invalidUsername %}
+                            {{invalidUsername[0]}}
+                        {% endif %}
+                    {% endwith %}
+                </div>
+                <input type="text" placeholder="Username" name="username">
+                <label for="password">Password</label>
+                <div class="f-alert">
+                    {% with invalidPassword = get_flashed_messages(category_filter=["invalidPassword"]) %}
+                        {% if invalidPassword %}
+                            {{invalidPassword[0]}}
+                        {% endif %}
+                    {% endwith %}
+                </div>
+                <input type="password" placeholder="Password" name="password">
+                <button type="submit">Login</button>
+            </form>
+        </div>
+
+        <div class="form-box">
+            <h1>Register Form</h1>
+            <form action="/register" method="POST">
+                <label for="username">Username</label>
+                <div class="f-alert">
+                    {% with takenUsername = get_flashed_messages(category_filter=["takenUsername"]) %}
+                        {% if takenUsername %}
+                            {{takenUsername[0]}}
+                        {% endif %}
+                    {% endwith %}
+                </div>
+                <input type="text" placeholder="Username" name="username">
+                <label for="password">Password</label>
+                <input type="password" placeholder="Password" name="password">
+                <button type="submit">Create account</button>
+            </form>
+        </div>
+    </main>
+{% endblock %}
