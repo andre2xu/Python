@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}User Profile{% endblock %}
+
+{% block body %}
+    {% if user %}
+        <p>Your username: {{user[0][0]}}</p>
+        <p>Your password: {{user[0][1]}}</p>
+    {% endif %}
+{% endblock %}
