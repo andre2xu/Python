@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+
+<!-- HTML head -->
+{% block stylesheet %}<link rel="stylesheet" href="{{url_for('static', filename='css/forms.css')}}">{% endblock %}
+
+{% block title %}Register{% endblock %}
+
+<!-- HTML body -->
+{% block body %}
+    <section class="form-box">
+        <h1>Sign up</h1>
+
+        <form action="/register" method="POST">
+            <label for="email">Email</label>
+            <input type="text" placeholder="example@email.com" id="email" class="{{errorBorderEmail}}" name="email" required>
+            <div class="error-message">
+                {% with invalidEmail = get_flashed_messages(category_filter=["invalidEmail"]) %}
+                    {% if invalidEmail %}
+                        {{invalidEmail[0]}}
+                    {% endif %}
+                {% endwith %}
+            </div>
+            
+            <label for="username">Username</label>
+            <input type="text" placeholder="Username" id="username" class="{{errorBorderUsername}}" name="username" required>
+            <div class="error-message">
+                {% with invalidUsername = get_flashed_messages(category_filter=["invalidUsername"]) %}
+                    {% if invalidUsername %}
+                        {{invalidUsername[0]}}
+                    {% endif %}
+                {% endwith %}
+            </div>
+            
+            <label for="password">Password</label>
+            <input type="password" placeholder="Password" id="password" name="password" required>
+
+            <a href="/user/login" class="form-link">Already have an account?</a>
+
+            <button type="submit">Create account</button>
+        </form>
+    </section>
+{% endblock %}
