@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/profile.css')}}">
+    <title>Profile {% block extra_head_info %}{% endblock %} | {% block profileName %}{% endblock %}</title>
+</head>
+<body>
+    <nav>
+        <div class="navwrapper">
+            <ul>
+                <li><a href="#">My Profile</a></li>
+                <li><a href="#">Blogs</a></li>
+                <li><a href="#">Gallery</a></li>
+            </ul>
+
+            <a href="/user/logout">Logout</a>
+        </div>
+    </nav>
+
+    {% block body %}{% endblock %}
+</body>
+</html>
