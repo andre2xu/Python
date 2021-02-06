@@ -1,0 +1,36 @@
+{% extends "profile-layout.html" %}
+
+<!-- HTML head -->
+{% block profileName %}{{account_name}}{% endblock %}
+
+
+<!-- HTML body -->
+{% block body %}
+    <main>
+        <div class="mainwrapper">
+            
+            <!-- User Biography -->
+            <aside>
+                <div class="aside-content">
+                    {% if not(userData["pfp"]) %}
+                        <img src="/static/images/default.png" alt="User profile picture" height="200" width="200">
+                    {% elif userData["pfp"] %}
+                        <img src="/static/images/{{userData['pfp']}}" alt="User profile picture" height="200" width="200">
+                    {% endif %}
+                    
+                    <div>
+                        <h1>{{userData["name"]}}</h1>
+                        <h2>Age: {{userData["age"]}}</h2>
+                        <h2>Gender: {{userData["gender"]}}</h2>
+                        <a href="/user/profile/{{account_name}}/account" class="edit-btn">edit</a>
+
+                        <h3>Joined: {{userData["date"]}}</h3>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Body -->
+            <section></section>
+        </div>
+    </main>
+{% endblock %}
