@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+<!-- HTML head -->
+{% block stylesheet %}<link rel="stylesheet" href="{{url_for('static', filename = 'css/main.css')}}">{% endblock %}
+
+{% block title %}Home{% endblock %}
+
+<!-- HTML body -->
+{% block buttons %}
+    <div class="form-btn">
+        <a href="/user/register">Sign up</a>
+        <a href="/user/login">Login</a>
+    </div>
+{% endblock %}
+
+{% block body %}
+    <div class="headers">
+        <h1>Flask API Practice</h1>
+        <h2>User Profile Page</h2>
+    </div>
+{% endblock %}
