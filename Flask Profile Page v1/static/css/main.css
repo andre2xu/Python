@@ -1,0 +1,79 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+nav {
+    background-color: #C4C4C4;
+    display: flex;
+    justify-content: center;
+}
+
+.innerbox {
+    padding: 1.5em;
+    width: 1450px;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.innerbox ul li {
+    display: inline-block;
+    list-style: none;
+    margin: 0 1.5em;
+    text-transform: uppercase;
+    font-size: 20px;
+}
+
+.innerbox ul li a {
+    text-decoration: none;
+    color: #5E5E5E;
+}
+
+.innerbox ul li a:hover {
+    border-top: 2px solid #5E5E5E;
+    border-bottom: 2px solid #5E5E5E;
+}
+
+.form-btn {
+    position: absolute;
+    right: 2em;
+}
+
+.form-btn a {
+    margin: 0 10px;
+    text-decoration: none;
+    color: #FFF;
+    font-size: 20px;
+}
+
+.form-btn a:nth-child(2) {
+    width: max-content;
+    padding: 5px 15px;
+    border: 2px solid #797979;
+    color: #5E5E5E;
+}
+
+.form-btn a:nth-child(2):hover {
+    background-color: #797979;
+    color: #FFF;
+}
+
+.form-btn a:nth-child(1):hover {
+    color: rgb(153, 133, 104)
+}
+
+.headers {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-size: 25px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.headers h2 {
+    color:  rgb(153, 133, 104);
+}
