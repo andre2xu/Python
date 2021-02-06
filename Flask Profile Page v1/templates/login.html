@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+<!-- HTML head -->
+{% block stylesheet %}<link rel="stylesheet" href="{{url_for('static', filename='css/forms.css')}}">{% endblock %}
+
+{% block title %}Login{% endblock %}
+
+<!-- HTML body -->
+{% block body %}
+    <section class="form-box">
+        <h1>Sign in</h1>
+
+        <form action="/login" method="POST">
+            <label for="email">Email</label>
+            <input type="text" placeholder="example@email.com" id="email" class="{{errorBorderEmail}}" name="email" required>
+            <div class="error-message">
+                {% with incorrectEmail = get_flashed_messages(category_filter=["incorrectEmail"]) %}
+                    {% if incorrectEmail %}
+                        {{incorrectEmail[0]}}
+                    {% endif %}
+                {% endwith %}
+            </div>
+            
+            <label for="username">Username</label>
+            <input type="text" placeholder="Username" id="username" class="{{errorBorderUsername}}" name="username" required>
+            <div class="error-message">
+                {% with incorrectUsername = get_flashed_messages(category_filter=["incorrectUsername"]) %}
+                    {% if incorrectUsername %}
+                        {{incorrectUsername[0]}}
+                    {% endif %}
+                {% endwith %}
+            </div>
+            
+            <label for="password">Password</label>
+            <input type="password" placeholder="Password" id="password" class="{{errorBorderPassword}}" name="password" required>
+            <div class="error-message">
+                {% with incorrectPassword = get_flashed_messages(category_filter=["incorrectPassword"]) %}
+                    {% if incorrectPassword %}
+                        {{incorrectPassword[0]}}
+                    {% endif %}
+                {% endwith %}
+            </div>
+
+            <a href="#" class="form-link">Forgot your password?</a>
+            <a href="/user/register" class="form-link">Don't have an account?</a>
+
+            <button type="submit">Login</button>
+        </form>
+    </section>
+{% endblock %}
