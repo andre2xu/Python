@@ -1,0 +1,76 @@
+{% extends 'main-layout.html' %}
+
+<!-- head -->
+{% block title %}Login{% endblock %}
+
+<!-- body -->
+{% block body %}
+    <form style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 2em; height: 480px; width: 420px; margin-top: 2em; background-color: #2B2B2B; display: flex; flex-direction: column;" method="POST" action="" novalidate>
+        {{loginForm.hidden_tag()}}
+        <div class="form-group" style="display: flex; flex-direction: column; margin-top: 1em;">
+            <label for="email" style="color: #FFF; margin-bottom: 5px;">{{loginForm.email.label}}</label>
+            {% if not(emailError) %}
+                {% with invalidEmail = get_flashed_messages(category_filter=['invalidEmail']) %}
+                    {% if invalidEmail %}
+                        {{loginForm.email(style="outline: none; border: 1.5px solid red;", placeholder="email")}}
+                        <p style="color: red; font-size: 15px; margin: 0 0 10px;">{{invalidEmail[0]}}</p>
+
+                    {% else %}
+                        {{loginForm.email(style="outline: none; margin-bottom: 20px;", placeholder="email")}}
+                    {% endif %}                
+                {% endwith %}
+            {% endif %}
+
+            {% if emailError %}
+                {{loginForm.email(style="outline: none; border: 1.5px solid red;", placeholder="email")}}
+                <p style="color: red; font-size: 15px; margin: 0 0 10px;">{{emailError}}</p>
+            {% endif %}
+        </div>
+        
+        <div class="form-group" style="display: flex; flex-direction: column;">
+            <label for="username" style="color: #FFF; margin-bottom: 5px;">{{loginForm.username.label}}</label>
+            {% if not(usernameError) %}
+                {% with invalidUsername = get_flashed_messages(category_filter=['invalidUsername']) %}
+                    {% if invalidUsername %}
+                        {{loginForm.username(style="outline: none; border: 1.5px solid red;", placeholder="username")}}
+                        <p style="color: red; font-size: 15px; margin: 0 0 10px;">{{invalidUsername[0]}}</p>
+
+                    {% else %}
+                        {{loginForm.username(style="outline: none; margin-bottom: 20px;", placeholder="username")}}
+                    {% endif %}                
+                {% endwith %}
+            {% endif %}
+
+            {% if usernameError %}
+                {{loginForm.username(style="outline: none; border: 1.5px solid red;", placeholder="username")}}
+                <p style="color: red; font-size: 15px; margin: 0 0 10px;">{{usernameError}}</p>
+            {% endif %}
+        </div>
+            
+        <div class="form-group" style="display: flex; flex-direction: column;">
+            <label for="password" style="color: #FFF; margin-bottom: 5px;">{{loginForm.password.label}}</label>
+            {% if not(passwordError) %}
+                {% with invalidPassword = get_flashed_messages(category_filter=['invalidPassword']) %}
+                    {% if invalidPassword %}
+                        {{loginForm.password(style="outline: none; border: 1.5px solid red;", placeholder="password")}}
+                        <p style="color: red; font-size: 15px; margin: 0 0 10px;">{{invalidPassword[0]}}</p>
+
+                    {% else %}
+                        {{loginForm.password(style="outline: none; margin-bottom: 20px;", placeholder="password")}}
+                    {% endif %}                
+                {% endwith %}
+            {% endif %}
+
+            {% if passwordError %}
+                {{loginForm.password(style="outline: none; border: 1.5px solid red;", placeholder="password")}}
+                <p style="color: red; font-size: 15px; margin: 0 0 10px;">{{passwordError}}</p>
+            {% endif %}
+        </div>
+
+        <a href="#" style="text-decoration: none; font-size: 15px; color: #47BCFF;">Forgot your password?</a>
+        <a href="/user/register" style="text-decoration: none; font-size: 15px; color: #47BCFF;">Don't have an account?</a>
+
+        <button type="submit" class="btn btn-primary" style="background-color: orange; margin-top: 1.5em; border: none; text-transform: uppercase; font-weight: bold;">Login</button>
+    </form>
+{% endblock %}
+
