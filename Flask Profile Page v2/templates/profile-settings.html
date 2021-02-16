@@ -1,0 +1,123 @@
+{% extends 'profile-layout.html' %}
+
+<!-- head -->
+{% block extra_title %}Settings{% endblock %}
+
+<!-- body -->
+{% block body %}
+    <main>
+        <div class="profile-header">
+            {% if userData['cover'] %}
+                <img src="/static/images/uploads/{{userData['cover']}}" alt="Cover photo" id="coverimg" style="height: 100%; width: 100%;">
+            {% else %}
+                <img src="{{url_for('static', filename='images/uploads/$cover.jpg')}}" alt="Cover photo" id="coverimg" style="height: 100%; width: 100%;">
+            {% endif %}
+        </div>
+
+        <div class="content-wrapper">
+            <div class="user-settings">
+                <!-- profile bio -->
+                <form action="/user/profile/{{userData['username']}}/account/profile-changes" method="POST">
+                    {{profileChangesForm.hidden_tag()}}
+                    <h1>Profile</h1>
+                    <label for="name">{{profileChangesForm.change_name.label}}</label>
+                    {{profileChangesForm.change_name(id="name", class_="text_input", placeholder="name")}}
+                    
+                    <label for="bio">{{profileChangesForm.change_bio.label}}</label>
+                    {% with bioError = get_flashed_messages(category_filter=['bioError']) %}
+                        {% if not(bioError) %}
+                            {{profileChangesForm.change_bio(id="bio", class_="text_input", placeholder="description (maximum of 50 characters)", rows="5")}}
+                        {% else %}
+                            {{profileChangesForm.change_bio(id="bio", class_="text_input", placeholder="description (maximum of 50 characters)", rows="5")}}
+                            <p style="color: red; font-size: 15px; margin: 0 0 10px;">{{bioError[0]}}</p>
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <button type="submit">Update</button>
+                </form>
+
+                <!-- profile images -->
+                <form action="/user/profile/{{userData['username']}}/account/upload" method="POST" enctype="multipart/form-data">
+                    <input type="file" name="cover" accept=".png, .jpg, .jpeg, .gif">
+                    <button type="submit">Change cover image</button>
+
+                    <input type="file" class="file_input" name="pfp" accept=".png, .jpg, .jpeg, .gif">
+                    <button type="submit">Change profile picture</button>
+                </form>
+
+                <!-- account -->
+                <form action="/user/profile/{{userData['username']}}/account/account-changes" method="POST">
+                    {{accountChangesForm.hidden_tag()}}
+                    <h1>Account</h1>
+                    <label for="email">{{accountChangesForm.change_email.label}}</label>
+                    {% with settingsEmailError = get_flashed_messages(category_filter=['settingsEmailError']) %}
+                        {% if not(settingsEmailError) %}
+                            {{accountChangesForm.change_email(id="email", class_="text_input", placeholder="email")}}
+                        {% else %}
+                            {{accountChangesForm.change_email(id="email", class_="text_input", placeholder="email")}}
+                            <p style="color: red; font-size: 15px; margin: 0 0 10px;">{{settingsEmailError[0]}}</p>
+                        {% endif %}
+                    {% endwith %}
+
+                    <label for="username">{{accountChangesForm.change_username.label}}</label>
+                    {{accountChangesForm.change_username(id="username", class_="text_input", placeholder="username")}}
+
+                    <button type="submit">Update</button>
+                </form>
+
+                <!-- security -->
+                <form action="/user/profile/{{userData['username']}}/account/security-changes" method="POST" novalidate>
+                    {{passwordChangesForm.hidden_tag()}}
+                    <h1>Security</h1>
+                    <label for="password">{{passwordChangesForm.change_password.label}}</label>
+                    {% with settingsPasswordError = get_flashed_messages(category_filter=['settingsPasswordError']) %}
+                        {% if not(settingsPasswordError) %}
+                            {{passwordChangesForm.change_password(id="password", class_="text_input", placeholder="new password")}}
+                        {% else %}
+                            {{passwordChangesForm.change_password(id="password", class_="text_input", placeholder="new password")}}
+                            <p style="color: red; font-size: 15px; margin: 0 0 10px;">{{settingsPasswordError[0]}}</p>
+                        {% endif %}
+                    {% endwith %}
+
+                    <label for="confirm_password">{{passwordChangesForm.confirm_password.label}}</label>
+                    {{passwordChangesForm.confirm_password(id="confirm_password", class_="text_input", placeholder="confirm new password")}}
+
+                    <button type="submit">Update</button>
+                </form>
+            </div>
+
+            <div class="user-section">
+                <section>
+                    {% if userData['pfp'] %}
+                        <img src="/static/images/uploads/{{userData['pfp']}}" alt="Profile picture" height="200" width="200" style="border-radius: 50%;">
+                    {% else %}
+                        <img src="{{url_for('static', filename='images/uploads/$default.png')}}" alt="Profile picture" height="200" width="200" style="border-radius: 50%;">
+                    {% endif %}
+
+                    {% if userData['name'] %}
+                        <h1>{{userData['name']}}</h1>
+                    {% else %}
+                        <h1>Anonymous</h1>
+                    {% endif %}
+                    
+                    <article>
+                        <p style="display: flex; flex-direction: column;">
+                            {% if userData['bio'] %}
+                                {{userData['bio']}}
+                            {% else %}
+                                Hello
+                            {% endif %}
+
+                            <span style="color: #a7a7a7;margin-top: 1em;">Joined: {{userData['date']}}</span>
+                        </p>
+                    </article>
+
+                    <div>
+                        <a href="#">Social media 1</a>
+                        <a href="#">Social media 2</a>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+{% endblock %}
