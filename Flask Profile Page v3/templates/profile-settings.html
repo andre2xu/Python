@@ -1,0 +1,188 @@
+{% extends 'profile-layout.html' %}
+
+<!-- head -->
+{% block extra_title %}Settings{% endblock %}
+
+<!-- body -->
+{% block home %}
+    <a class="nav-link active" aria-current="page" href="/user/profile/{{userData['username']}}">Home</a>
+{% endblock %}
+
+{% block gallery %}
+    <a class="nav-link" href="/user/profile/{{userData['username']}}/gallery">Gallery</a>
+{% endblock %}
+
+{% block body %}
+    <main>
+        <div class="profile-header">
+            <!-- custom background cover (if any has been set) -->
+            {% if userData['cover'] %}
+                <img src="/static/images/uploads/{{userData['cover']}}" alt="Cover photo" id="coverimg" style="height: 100%; width: 100%;">
+
+            <!-- default background cover -->
+            {% else %}
+                <img src="{{url_for('static', filename='images/uploads/$cover.jpg')}}" alt="Cover photo" id="coverimg" style="height: 100%; width: 100%;">
+            {% endif %}
+        </div>
+
+        <div class="content-wrapper">
+            <div class="user-settings">
+                <!-- profile changes -->
+                <form action="/user/profile/{{userData['username']}}/account/profile-changes" method="POST">
+                    {{profileChangesForm.hidden_tag()}}
+                    <h1>Profile</h1>
+
+                    <!-- NAME CHANGE -->
+                    <label for="name">{{profileChangesForm.change_name.label}}</label>
+                    {{profileChangesForm.change_name(id="name", class_="text_input", placeholder="name")}}
+
+                    <!-- PROFILE BIO CHANGE -->
+                    <label for="bio">{{profileChangesForm.change_bio.label}}</label>
+                    {% with bioError = get_flashed_messages(category_filter=['bioError']) %}
+
+                        <!-- default (no flash message) -->
+                        {% if not(bioError) %}
+                            {{profileChangesForm.change_bio(id="bio", class_="text_input", placeholder="description (maximum of 50 characters)", rows="5")}}
+
+                        <!-- with flash message -->
+                        {% else %}
+                            {{profileChangesForm.change_bio(id="bio", class_="text_input", placeholder="description (maximum of 50 characters)", rows="5")}}
+                            <p style="color: red; font-size: 15px; margin: 0 0 10px;">{{bioError[0]}}</p>
+                        {% endif %}
+
+                    {% endwith %}
+                    
+                    <button type="submit">Update</button>
+                </form>
+
+                <!-- profile image uploads -->
+                <form action="/user/profile/{{userData['username']}}/account/upload" method="POST" enctype="multipart/form-data">
+                    <!-- COVER CHANGE -->
+                    <input type="file" name="cover" accept=".png, .jpg, .jpeg, .gif">
+                    <!-- adds remove button (if user has a custom background cover) -->
+                    {% if userData['cover'] %}
+                        <a href="/user/profile/{{userData['username']}}/account/delete-cover-{{userData['cover']}}" style="text-decoration: none; color: red;">remove</a>
+                    {% endif %}
+                    <button type="submit">Change cover image</button>
+
+                    <!-- PFP CHANGE -->
+                    <input type="file" class="file_input" name="pfp" accept=".png, .jpg, .jpeg, .gif">
+                    <!-- adds remove button (if user has a custom profile picture) -->
+                    {% if userData['pfp'] %}
+                        <a href="/user/profile/{{userData['username']}}/account/delete-pfp-{{userData['pfp']}}" style="text-decoration: none; color: red;">remove</a>
+                    {% endif %}
+                    <button type="submit">Change profile picture</button>
+                </form>
+
+                <!-- account changes -->
+                <form action="/user/profile/{{userData['username']}}/account/account-changes" method="POST">
+                    {{accountChangesForm.hidden_tag()}}
+                    <h1>Account</h1>
+
+                    <!-- EMAIL ADDRESS CHANGE -->
+                    <label for="email">{{accountChangesForm.change_email.label}}</label>
+                    {% with settingsEmailError = get_flashed_messages(category_filter=['settingsEmailError']) %}
+
+                        <!-- default (no flash message) -->
+                        {% if not(settingsEmailError) %}
+                            {{accountChangesForm.change_email(id="email", class_="text_input", placeholder="email")}}
+                        
+                        <!-- with flash message -->
+                        {% else %}
+                            {{accountChangesForm.change_email(id="email", class_="text_input", placeholder="email")}}
+                            <p style="color: red; font-size: 15px; margin: 0 0 10px;">{{settingsEmailError[0]}}</p>
+                        {% endif %}
+
+                    {% endwith %}
+
+                    <!-- USERNAME CHANGE -->
+                    <label for="username">{{accountChangesForm.change_username.label}}</label>
+                    {{accountChangesForm.change_username(id="username", class_="text_input", placeholder="username")}}
+
+                    <button type="submit">Update</button>
+                </form>
+
+                <!-- security changes -->
+                <form action="/user/profile/{{userData['username']}}/account/security-changes" method="POST" novalidate>
+                    {{passwordChangesForm.hidden_tag()}}
+                    <h1>Security</h1>
+
+                    <!-- PASSWORD CHANGE -->
+                    <label for="password">{{passwordChangesForm.change_password.label}}</label>
+                    {% with settingsPasswordError = get_flashed_messages(category_filter=['settingsPasswordError']) %}
+
+                        <!-- default (no flash message) -->
+                        {% if not(settingsPasswordError) %}
+                            {{passwordChangesForm.change_password(id="password", class_="text_input", placeholder="new password")}}
+
+                        <!-- with flash message -->
+                        {% else %}
+                            {{passwordChangesForm.change_password(id="password", class_="text_input", placeholder="new password")}}
+                            <p style="color: red; font-size: 15px; margin: 0 0 10px;">{{settingsPasswordError[0]}}</p>
+                        {% endif %}
+
+                    {% endwith %}
+
+                    <!-- CONFIRM NEW PASSWORD -->
+                    <label for="confirm_password">{{passwordChangesForm.confirm_password.label}}</label>
+                    {{passwordChangesForm.confirm_password(id="confirm_password", class_="text_input", placeholder="confirm new password")}}
+
+                    <button type="submit">Update</button>
+                </form>
+
+                <a href="/user/profile/{{userData['username']}}/account/delete-account" style="text-decoration: none; color: red;">Delete account</a>
+            </div>
+
+            <div class="user-section">
+                <section>
+                    <!-- custom profile picture (if any has been set) -->
+                    {% if userData['pfp'] %}
+                        <img src="/static/images/uploads/{{userData['pfp']}}" alt="Profile picture" height="200" width="200" style="border-radius: 50%;">
+
+                    <!-- default profile picture -->
+                    {% else %}
+                        <img src="{{url_for('static', filename='images/uploads/$default.png')}}" alt="Profile picture" height="200" width="200" style="border-radius: 50%;">
+                    {% endif %}
+
+                    <!-- following -->
+                    {% if userFollowingData %}
+                        <div style="margin: 0 auto; display: inline;"><span style="font-weight: bold;">Followers:</span> {{userFollowingData['count']}}</div>
+                    {% else %}
+                        <div style="margin: 0 auto; display: inline;"><span style="font-weight: bold;">Followers:</span> 0</div>
+                    {% endif %}
+
+                    <!-- custom name (if any has been set) -->
+                    {% if userData['name'] %}
+                        <h1>{{userData['name']}}</h1>
+
+                    <!-- default name -->
+                    {% else %}
+                        <h1>Anonymous</h1>
+                    {% endif %}
+
+                    <article>
+                        <p style="display: flex; flex-direction: column;">
+                            <!-- custom profile bio (if any has been set) -->
+                            {% if userData['bio'] %}
+                                {{userData['bio']}}
+
+                            <!-- default profile bio -->
+                            {% else %}
+                                Hello
+                            {% endif %}
+
+                            <span style="color: #a7a7a7;margin-top: 1em;">Joined: {{userData['date']}}</span>
+                        </p>
+                    </article>
+
+                    <div>
+                        <a href="#">Social media 1</a>
+                        <a href="#">Social media 2</a>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+{% endblock %}
+
+{% block logout %}<a href="/logout" style="padding: 5px 10px; text-align: center; text-decoration: none; color: #FFF; font-weight: bold;background-color: orange;">Logout</a>{% endblock %}
