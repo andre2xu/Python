@@ -1,0 +1,110 @@
+{% extends 'profile-layout.html' %}
+
+<!-- body -->
+{% block home %}
+    <a class="nav-link active" aria-current="page" href="/user/profile/{{userData['username']}}/view">Home</a>
+{% endblock %}
+
+{% block gallery %}
+    <a class="nav-link" href="/user/profile/{{userData['username']}}/gallery/view">Gallery</a>
+{% endblock %}
+
+{% block body %}
+    <main>
+        <div class="profile-header">
+            <!-- custom background cover (if any has been set) -->
+            {% if userData['cover'] %}
+                <img src="/static/images/uploads/{{userData['cover']}}" alt="Cover photo" id="coverimg" style="height: 100%; width: 100%;">
+            
+            <!-- default background cover -->
+            {% else %}
+                <img src="{{url_for('static', filename='images/uploads/$cover.jpg')}}" alt="Cover photo" id="coverimg" style="height: 100%; width: 100%;">
+            {% endif %}
+        </div>
+
+        <div class="content-wrapper">
+            <div class="user-blogs">
+                <!-- renders blogs (if any has been posted) -->
+                {% if userBlogData %}
+                    {% for blog in userBlogData %}
+                        <article style="margin-top: 3em; background-color: #FFF; padding: 2em; position: relative;">
+                            <a href="/user/profile/{{userData['username']}}/delete-blog-{{blog['title']}}" style="text-decoration: none; color: red; position: absolute; top: 5px; right: 15px;">delete</a>
+                            
+                            <h1>{{blog['title']}}</h1>
+                            <p>{{blog['body']}}</p>
+
+                            <span style="color: #a7a7a7;margin-top: 1em;">{{blog['date']}}</span>
+                        </article>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="user-section">
+                <section>
+                    <!-- custom profile picture (if any has been set) -->
+                    {% if userData['pfp'] %}
+                        <img src="/static/images/uploads/{{userData['pfp']}}" alt="Profile picture" height="200" width="200" style="border-radius: 50%;">
+
+                    <!-- default profile picture -->
+                    {% else %}
+                        <img src="{{url_for('static', filename='images/uploads/$default.png')}}" alt="Profile picture" height="200" width="200" style="border-radius: 50%;">
+                    {% endif %}
+
+                    <!-- follow -->
+                    {% if userFollowingData %}
+                        <div style="margin: 0 auto; display: inline;"><span style="font-weight: bold;">Followers:</span> {{userFollowingData['count']}}</div>
+                    {% else %}
+                        <div style="margin: 0 auto; display: inline;"><span style="font-weight: bold;">Followers:</span> 0</div>
+                    {% endif %}
+
+                    <!-- unfollow -->
+                    {% if not returnUsername in userFollowingData['followers'] %}
+                        <a href="/user/profile/{{userData['username']}}/followed-by-{{returnUsername}}" id="edit-btn">Follow</a>
+                    {% else %}
+                        <a href="/user/profile/{{userData['username']}}/unfollowed-by-{{returnUsername}}" id="edit-btn">Unfollow</a>
+                    {% endif %}
+
+                    <!-- custom name (if any has been set) -->
+                    {% if userData['name'] %}
+                        <h1>{{userData['name']}}</h1>
+
+                    <!-- default name -->
+                    {% else %}
+                        <h1>Anonymous</h1>
+                    {% endif %}
+                    
+                    <article>
+                        <p style="display: flex; flex-direction: column;">
+                            <!-- custom profile bio (if any has been set) -->
+                            {% if userData['bio'] %}
+                                {{userData['bio']}}
+
+                            <!-- default profile bio -->
+                            {% else %}
+                                Hello
+                            {% endif %}
+
+                            <span style="color: #a7a7a7;margin-top: 1em;">Joined: {{userData['date']}}</span>
+                        </p>
+                    </article>
+
+                    <div>
+                        <a href="#">Social media 1</a>
+                        <a href="#">Social media 2</a>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+{% endblock %}
+
+{% block logout %}
+    <!-- link to return to profile page (appears when the user visits another person's profile page while they are logged in to their own account) -->
+    {% if returnUsername %}
+        <a href="/user/profile/{{returnUsername}}" style="text-decoration: none; width: 250px;">Go back to profile page</a>
+
+    <!-- login button (appears if the user has not logged in to their account yet but is visiting someone else's profile page) -->
+    {% else %}
+        <a href="/user/login" style="text-decoration: none; background-color: orange; padding: 2px 15px; font-weight: bold; text-transform: uppercase; color: #FFF;">Login</a>
+    {% endif %}
+{% endblock %}
