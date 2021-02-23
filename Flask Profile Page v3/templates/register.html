@@ -1,0 +1,82 @@
+{% extends 'main-layout.html' %}
+
+<!-- head -->
+{% block title %}Register{% endblock %}
+
+<!-- body -->
+{% block body %}
+    <form style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 2em; height: 460px; width: 420px; margin-top: 2em; background-color: #2B2B2B; display: flex; flex-direction: column;" method="POST" action="" novalidate>
+        {{registerForm.hidden_tag()}}
+        <div class="form-group" style="display: flex; flex-direction: column; margin-top: 1em;">
+            <label for="email" style="color: #FFF; margin-bottom: 5px;">{{registerForm.email.label}}</label>
+            {% if not(emailError) %}
+
+                {% with invalidEmail = get_flashed_messages(category_filter=['invalidEmail']) %}
+
+                    <!-- incorrect email input -->
+                    {% if invalidEmail %}
+                        {{registerForm.email(style="outline: none; border: 1.5px solid red;", placeholder="example@email.com")}}
+                        <p style="color: red; font-size: 15px; margin: 0 0 10px;">{{invalidEmail[0]}}</p>
+
+                    <!-- default -->
+                    {% else %}
+                        {{registerForm.email(style="outline: none; margin-bottom: 20px;", placeholder="example@email.com")}}
+                    {% endif %}
+
+                {% endwith %}
+
+            {% endif %}
+
+            <!-- failed form validation -->
+            {% if emailError %}
+                {{registerForm.email(style="outline: none; border: 1.5px solid red;", placeholder="example@email.com")}}
+                <p style="color: red; font-size: 15px; margin: 0 0 10px;">{{emailError}}</p>
+            {% endif %}
+        </div>
+        
+        <div class="form-group" style="display: flex; flex-direction: column;">
+            <label for="username" style="color: #FFF; margin-bottom: 5px;">{{registerForm.username.label}}</label>
+            {% if not(usernameError) %}
+
+                {% with invalidUsername = get_flashed_messages(category_filter=['invalidUsername']) %}
+
+                    <!-- incorrect username input -->
+                    {% if invalidUsername %}
+                        {{registerForm.username(style="outline: none; border: 1.5px solid red;", placeholder="username")}}
+                        <p style="color: red; font-size: 15px; margin: 0 0 10px;">{{invalidUsername[0]}}</p>
+
+                    <!-- default -->
+                    {% else %}
+                        {{registerForm.username(style="outline: none; margin-bottom: 20px;", placeholder="username")}}
+                    {% endif %}   
+
+                {% endwith %}
+
+            {% endif %}
+
+            <!-- failed form validation -->
+            {% if usernameError %}
+                {{registerForm.username(style="outline: none; border: 1.5px solid red;", placeholder="username")}}
+                <p style="color: red; font-size: 15px; margin: 0 0 10px;">{{usernameError}}</p>
+            {% endif %}
+        </div>
+            
+        <div class="form-group" style="display: flex; flex-direction: column;">
+            <label for="password" style="color: #FFF; margin-bottom: 5px;">{{registerForm.password.label}}</label>
+            <!-- default (no flash message) -->
+            {% if not(passwordError) %}
+                {{registerForm.password(style="outline: none; margin-bottom: 20px;", placeholder="password (maximum of 12 characters)")}}
+            {% endif %}
+
+            <!-- with flash message -->
+            {% if passwordError %}
+                {{registerForm.password(style="outline: none; border: 1.5px solid red;", placeholder="password (maximum of 12 characters)")}}
+                <p style="color: red; font-size: 15px; margin: 0 0 10px;">{{passwordError}}</p>
+            {% endif %}
+        </div>
+
+        <a href="/user/login" style="text-decoration: none; font-size: 15px; color: #47BCFF;">Already have an account?</a>
+
+        <button type="submit" class="btn btn-primary" style="background-color: orange; margin-top: 1.5em; border: none; text-transform: uppercase; font-weight: bold;">Create account</button>
+    </form>
+{% endblock %}
