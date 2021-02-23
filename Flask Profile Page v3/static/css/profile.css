@@ -1,0 +1,152 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body main {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    max-width: 1500px;
+    margin: 0 auto;
+    background-color: #e4e4e4;
+}
+
+.profile-header {
+    height: 350px;
+    grid-column: 1;
+    grid-row: 1;
+    background-color: #333333;
+}
+
+.content-wrapper {
+    grid-column: 1;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: 1fr 400px;
+}
+
+.user-blogs {
+    grid-column: 1;
+    display: flex;
+    justify-content: center;
+    padding: 2em 0 1em 4em;
+}
+
+.blogs {
+    padding: 2em;
+    background-color: #FFF;
+    height: 200px;
+}
+
+.user-section {
+    display: flex;
+    justify-content: center;
+    padding-top: 2em;
+    grid-column: 2;
+}
+
+.user-section section {
+    background-color: #FFF;
+    width: 75%;
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+}
+
+.user-section section img {
+    margin: 0 auto;
+}
+
+#edit-btn {
+    margin: 15px auto 0;
+    padding: 1px 10px;
+    width: fit-content;
+    text-decoration: none;
+    background-color: #d1d1d1;
+    color: #000;
+    border: 1px solid #000;
+    font-size: 15px;
+}
+
+.user-section section h1 {
+    margin-top: 25px;
+    padding: 5px 0;
+    border-top: 1px solid #c4c4c4;
+    border-bottom: 1px solid #c4c4c4;
+    font-size: 35px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.user-section section article {
+    padding: 10px;
+    border-bottom: 1px solid #c4c4c4;
+}
+
+.user-section section div {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.user-section section div a {
+    margin-bottom: 10px;
+}
+
+.user-blogs {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-blogs label {
+    margin-bottom: 5px;
+    font-weight: 500;
+    font-size: 20px;
+}
+
+/* profile page settings CSS */
+.user-settings {
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2em;
+}
+
+.user-settings form {
+    margin-bottom: 2.5em;
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.user-settings form h1 {
+    font-size: 25px;
+}
+
+.user-settings form label {
+    margin-bottom: 5px;
+    font-size: 15px;
+}
+
+.user-settings form button {
+    margin-top: 1em;
+    border: 1px solid #000;
+    padding: 2px;
+}
+
+.text_input {
+    font-size: 15px;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+.text_input:focus {
+    outline: none;
+}
+
+.file_input {
+    margin-top: 20px;
+}
