@@ -1,0 +1,100 @@
+{% extends 'profile-layout.html' %}
+
+<!-- head -->
+{% block extra_title %}Gallery{% endblock %}
+
+<!-- body -->
+{% block home %}
+    <a class="nav-link active" aria-current="page" href="/user/profile/{{userData['username']}}">Home</a>
+{% endblock %}
+
+{% block gallery %}
+    <a class="nav-link" href="/user/profile/{{userData['username']}}/gallery">Gallery</a>
+{% endblock %}
+
+{% block body %}
+    <main>
+        <div class="profile-header">
+            <!-- custom background cover (if any has been set) -->
+            {% if userData['cover'] %}
+                <img src="/static/images/uploads/{{userData['cover']}}" alt="Cover photo" id="coverimg" style="height: 100%; width: 100%;">
+            
+            <!-- default background cover -->
+            {% else %}
+                <img src="{{url_for('static', filename='images/uploads/$cover.jpg')}}" alt="Cover photo" id="coverimg" style="height: 100%; width: 100%;">
+            {% endif %}
+        </div>
+
+        <div class="content-wrapper">
+            <div class="user-gallery" style="display: flex; justify-content: center; flex-direction: column;">
+                <form action="/user/profile/{{userData['username']}}/gallery/upload" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; width: fit-content; margin: 2em auto 3.5em;" novalidate>
+                    <input type="file" name="pics" accept=".png, .jpg, .jpeg, .gif">
+                    <button type="submit" style="border: 1px solid #000; margin-top: 10px;">Add</button>
+                </form>
+
+                <!-- renders gallery pictures (if any has been uploaded) -->
+                {% if userGalleryData %}
+                    {% for pic in userGalleryData %}
+                        <div class="gallery-pic" style="display: flex; flex-direction: column;">
+                            <img src="/static/images/gallery/{{pic['filename']}}" height="320" width="530" style="margin: 0 auto;">
+                            <a href="/user/profile/{{userData['username']}}/gallery/delete-pic-{{pic['filename']}}" style="margin: 5px auto 4em; color: red; text-decoration: none;">delete</a>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="user-section">
+                <section>
+                    <!-- custom profile picture (if any has been set) -->
+                    {% if userData['pfp'] %}
+                        <img src="/static/images/uploads/{{userData['pfp']}}" alt="Profile picture" height="200" width="200" style="border-radius: 50%;">
+
+                    <!-- default profile picture -->
+                    {% else %}
+                        <img src="{{url_for('static', filename='images/uploads/$default.png')}}" alt="Profile picture" height="200" width="200" style="border-radius: 50%;">
+                    {% endif %}
+
+                    <!-- following -->
+                    {% if userFollowingData %}
+                        <div style="margin: 0 auto; display: inline;"><span style="font-weight: bold;">Followers:</span> {{userFollowingData['count']}}</div>
+                    {% else %}
+                        <div style="margin: 0 auto; display: inline;"><span style="font-weight: bold;">Followers:</span> 0</div>
+                    {% endif %}
+
+                    <a href="/user/profile/{{userData['username']}}/account" id="edit-btn">Edit Profile</a>
+
+                    <!-- custom name (if any has been set) -->
+                    {% if userData['name'] %}
+                        <h1>{{userData['name']}}</h1>
+
+                    <!-- default name -->
+                    {% else %}
+                        <h1>Anonymous</h1>
+                    {% endif %}
+                    
+                    <article>
+                        <p style="display: flex; flex-direction: column;">
+                            <!-- custom profile bio (if any has been set) -->
+                            {% if userData['bio'] %}
+                                {{userData['bio']}}
+
+                            <!-- default profile bio -->
+                            {% else %}
+                                Hello
+                            {% endif %}
+
+                            <span style="color: #a7a7a7;margin-top: 1em;">Joined: {{userData['date']}}</span>
+                        </p>
+                    </article>
+
+                    <div>
+                        <a href="#">Social media 1</a>
+                        <a href="#">Social media 2</a>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+{% endblock %}
+
+{% block logout %}<a href="/logout" style="padding: 5px 10px; text-align: center; text-decoration: none; color: #FFF; font-weight: bold;background-color: orange;">Logout</a>{% endblock %}
