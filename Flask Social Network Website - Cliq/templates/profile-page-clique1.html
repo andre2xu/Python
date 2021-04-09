@@ -1,0 +1,236 @@
+{% extends 'profile-layout.html' %}
+
+<!-- body -->
+{% block body %}
+    <body class="clique1-profile-bg">
+        <div class="clique1-profile-wrapper">
+            <!-- header -->
+            <section>
+                <!-- searchbar -->
+                <div class="clique1-searchbar-container">
+                    <form action="/profile-search-clique1" method="POST">
+                        <input type="text" placeholder="Search username..." name="clique1-searchbar" id="clique1-searchbar">
+                        <button>
+                            <img src="/static/icons/search1.svg">
+                        </button>
+                    </form>
+                    <ul id="clique1-search-suggestions"></ul>
+                </div>
+
+                {% if userData['name'] %}
+                    <h1 style="color: #fff;">{{userData['name']}}</h1>
+                {% else %}
+                    <h1></h1>
+                {% endif %}
+
+                <!-- the dimensions of the cover are only displayed to the user if they don't have one -->
+                {% if not(userData['cover']) %}
+                    <small>WxH: 1500px x 400px</small>
+                {% endif %}
+
+                <!-- displays the cover set by the user -->
+                {% if userData['cover'] %}
+                    <img src="/static/images/cover/{{userData['cover']}}" alt="Profile Cover">
+                {% endif %}
+
+                <!-- logout button and settings icon -->
+                <div class="clique1-settings-logout">
+                    <a href="/profile-settings-myaccount/{{userData['username']}}">
+                        <img src="/static/icons/cog2.svg" alt="Account Settings">
+                    </a>
+                    <a class="clique1-logout-return" href="/logout">Logout</a>
+                </div>
+            </section>
+
+
+            <!-- nav -->
+            <nav>
+                <ul>
+                    <li><a href="/profile-clique1/{{userData['username']}}">Dashboard</a></li>
+                    <li><a href="#">Followers: {{followersCount}}</a></li>
+                    <li><a href="#">Ratings: {{ratingsCount}}</a></li>
+                </ul>
+            </nav>
+
+
+            <!-- main body -->
+            <main>
+                <!-- posts -->
+                <div>
+                    <!-- this loads all the user's posts -->
+                    {% for posts in postsDataSet %}
+
+                        {% if posts['file_type'] == 'img' %}
+                            <!-- displays the posts with attached images -->
+                            <article>
+                                <a href="/profile-clique1/{{userData['username']}}/post-delete-{{posts['id']}}" title="Delete post" class="clique1-post-delete"><img src="/static/icons/trash-alt-solid.svg"></a>
+                                <h1>{{posts['title']}}</h1>
+                                <p>{{posts['body']}}</p>
+                                <img src="/static/images/posts/{{posts['file']}}" class="clique1-post-img">
+                            </article>
+
+
+                        {% elif posts['file_type'] == '' and posts['file'] == '' and not(posts['title'] == '') or not(posts['body'] == '') %}
+                            <!-- displays the posts with no attachments -->
+                            <article>
+                                <a href="/profile-clique1/{{userData['username']}}/post-delete-{{posts['id']}}" title="Delete post" class="clique1-post-delete"><img src="/static/icons/trash-alt-solid.svg"></a>
+                                <h1>{{posts['title']}}</h1>
+                                <p>{{posts['body']}}</p>
+                            </article>
+
+
+                        {% elif posts['file_type'] == 'other' %}
+                            <!-- displays the posts with non-image attachments -->
+                            <article>
+                                <a href="/profile-clique1/{{userData['username']}}/post-delete-{{posts['id']}}" title="Delete post" class="clique1-post-delete"><img src="/static/icons/trash-alt-solid.svg"></a>
+                                <h1>{{posts['title']}}</h1>
+                                <p>{{posts['body']}}</p>
+                                <a href="/profile-clique1/file_viewer/{{posts['file']}}" target="_blank" class="clique1-post-file">View attachment</a>
+                            </article>
+                        {% endif %}
+                    {% endfor %}
+
+
+                    <!-- plus button that toggles the post form -->
+                    <button onclick="clique1PostForm()" id="clique1-add-post">&plus;</button>
+
+                    <!-- post form -->
+                    <form action="/profile-clique1/{{userData['username']}}/post-upload" method="POST" id="clique1-post" title="Double click to cancel post" enctype="multipart/form-data">
+                        <label for="post-title">Title</label>
+                        <input type="text" name="post_title" id="post-title" placeholder="Title">
+
+                        <label for="post-body">Body</label>
+                        <textarea name="post_body" id="post-body" placeholder="What's happening?"></textarea>
+                        <input type="file" name="post_body_file">
+
+                        <button type="submit" form="clique1-post">Post</button>
+                    </form>
+                </div>
+
+
+                <!-- user bio & info -->
+                <div>
+                    <aside>
+                        <!-- loads the user's custom profile picture if they have one, and the default if they don't -->
+                        {% if userData['pfp'] %}
+                            <img src="/static/images/pfp/{{userData['pfp']}}" alt="Profile Picture">
+                        {% else %}
+                            <img src="/static/images/pfp/$default_pfp.png" alt="Profile Picture">
+                        {% endif %}
+
+                        <!-- loads the user's selected niche or an empty span element if they have yet to choose (the empty span is temporary, it is only there at the beginning because some CSS was applied to that span tag which spaces out the content in the user's profile bio) -->
+                        {% if userData['niche'] %}
+                            <span style="color: #b8b8b8;">{{userData['niche']}}</span>
+                        {% else %}
+                            <span></span>
+                        {% endif %}
+
+                        <span>Joined: {{userData['joined']}}</span>
+
+                        <!-- edit profile button -->
+                        <a href="/profile-settings-myprofile/{{userData['username']}}">Edit Profile</a>
+
+                        {% if userData['bio'] %}
+                            <p>{{userData['bio']}}</p>
+                        {% else %}
+                            <p>Hi, I am {{userData['username']}}!</p>
+                        {% endif %}
+
+                        <!-- this loads all the user's website URLs. **The double slash prefixed in the href attribute allows the link to take the viewer to the desired webpage regardless of HOW THE LINK WAS TYPED by the user. For more info, see 'db.py'** -->
+                        <ul>
+                            {% for upblData in upblDataSet %}
+                                    <li><a href="//{{upblData['url']}}" target="_blank">{{upblData['url']}}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </aside>
+
+                    <div id="newsfeed" style="margin-left: 19px;"></div>
+                </div>
+            </main>
+        </div>
+
+
+
+        <!-- JAVASCRIPT -->
+
+        <script src="{{url_for('static', filename='app.js')}}"></script>
+        <script src="{{url_for('static', filename='jquery-3.6.0.min.js')}}"></script>
+
+        <script>
+            const clique1_searchbar = document.getElementById('clique1-searchbar');
+            const clique1_search_suggestions = document.getElementById('clique1-search-suggestions');
+
+            clique1_searchbar.addEventListener('keyup', () => {
+                setTimeout(() => {
+                    clique1_search_suggestions.innerHTML = '';
+                }, 10)
+                
+                if (clique1_searchbar.value) {
+                    let search_input = clique1_searchbar.value;
+
+                    let xhr = new XMLHttpRequest()
+                    xhr.open('POST', '/profile-search-clique1');
+                    xhr.setRequestHeader('Content-type', 'application/json');
+                    xhr.send(JSON.stringify({'search_query':search_input}));
+
+                    xhr.onload = () => {
+                        let search_results = xhr.response;
+                        parsed_search_results = JSON.parse(search_results);
+
+                        parsed_search_results.forEach((user) => {
+                            let new_li = document.createElement('li');
+                            let new_a = document.createElement('a');
+                            let result = document.createTextNode(user[0]);
+                            new_a.setAttribute('href', `/profile-${user[1]}-view/${user[0]}`);
+                            
+                            new_a.appendChild(result);
+                            new_li.appendChild(new_a);
+                            clique1_search_suggestions.appendChild(new_li);
+                        })
+                    }
+                }
+            })
+        </script>
+
+        <script> 
+            rssfeed_url = new Array(); 
+            rssfeed_url[0]="https://news.google.com/rss";  
+            rssfeed_frame_width="400"; 
+            rssfeed_frame_height="380"; 
+            rssfeed_scroll="on"; 
+            rssfeed_scroll_step="6"; 
+            rssfeed_scroll_bar="off"; 
+            rssfeed_target="_blank"; 
+            rssfeed_font_size="16"; 
+            rssfeed_font_face=""; 
+            rssfeed_border="on"; 
+            rssfeed_css_url=""; 
+            rssfeed_title="on"; 
+            rssfeed_title_name="Latest News"; 
+            rssfeed_title_bgcolor="#C21111"; 
+            rssfeed_title_color="#fff"; 
+            rssfeed_title_bgimage=""; 
+            rssfeed_footer="off"; 
+            rssfeed_footer_name="rss feed"; 
+            rssfeed_footer_bgcolor="#fff"; 
+            rssfeed_footer_color="#333"; 
+            rssfeed_footer_bgimage=""; 
+            rssfeed_item_title_length="50"; 
+            rssfeed_item_title_color="#616161"; 
+            rssfeed_item_bgcolor="#fff"; 
+            rssfeed_item_bgimage=""; 
+            rssfeed_item_border_bottom="on"; 
+            rssfeed_item_source_icon="off"; 
+            rssfeed_item_date="off"; 
+            rssfeed_item_description="on"; 
+            rssfeed_item_description_length="120"; 
+            rssfeed_item_description_color="#8C8C8C"; 
+            rssfeed_item_description_link_color="#333"; 
+            rssfeed_item_description_tag="off"; 
+            rssfeed_no_items="0"; 
+            rssfeed_cache = "707a2aef4730d47845bda9e13a9fb13a"; 
+        </script>
+        
+        <script src="{{url_for('static', filename='rss-feed.js')}}"></script> 
+    </body>
+{% endblock %}
