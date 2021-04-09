@@ -1,0 +1,168 @@
+{% extends 'layout.html' %}
+
+<!-- head -->
+{% block title %}Log in or Sign up{% endblock %}
+
+<!-- body -->
+{% block body %}
+    <body class="body-bg-theme">
+        <!-- register form & background dimming effect -->
+        <div class="bg-effect">
+            <form action="/register" method="POST" id="reg" novalidate>
+                {{registerForm.csrf_token(id="register-token")}}
+
+                {% if invalidSubmissionFlag %}
+                    <!-- this allows the register form's exit button to work even after the class, that keeps the form active after a failed submission, is re-toggled (without this fix, the re-toggling messes up the function of the exit button) -->
+                    <div id="exit-btn" onclick="disableRegisterForm()">&#10006;</div>
+                {% else %}
+                    <!-- default -->
+                    <div id="exit-btn" onclick="registerForm()">&#10006;</div>
+                {% endif %}
+                
+                <h2>Register</h2>
+                {% with invalidUsername = get_flashed_messages(category_filter=['invalidUsername'])%}
+                    {% if invalidUsername %}
+
+                        <!-- displays flash message(s) & red border -->
+                        <label for="usernameReg">{{registerForm.usernameReg.label}}</label>
+                        {{registerForm.usernameReg(placeholder="Username", id="usernameReg", style="border: 1.5px solid red; margin-bottom: 5px;")}}
+                        <span style="color: red; margin-bottom: 10px;">{{invalidUsername[0]}}</span>
+
+                    {% else %}
+
+                        <!-- no flash message(s) but... -->
+                        {% if registerUsernameError %}
+                            <!-- displays error message(s) & red border -->
+                            <label for="usernameReg">{{registerForm.usernameReg.label}}</label>
+                            {{registerForm.usernameReg(placeholder="Username", id="usernameReg", style="border: 1.5px solid red; margin-bottom: 5px;")}}
+                            <span style="color: red; margin-bottom: 10px;">{{registerUsernameError}}</span>
+                        {% else %}
+                            <!-- default -->
+                            <label for="usernameReg">{{registerForm.usernameReg.label}}</label>
+                            {{registerForm.usernameReg(placeholder="Username", id="usernameReg")}}
+                        {% endif %}
+
+                    {% endif %}
+                {% endwith %}
+
+                {% if registerPasswordError %}
+                    <!-- displays error message(s) & red border -->
+                    <label for="passwordReg">{{registerForm.passwordReg.label}}</label>
+                    {{registerForm.passwordReg(placeholder="Password", id="passwordReg", style="border: 1.5px solid red; margin-bottom: 5px;")}}
+                    <span style="color: red; margin-bottom: 10px;">{{registerPasswordError}}</span>
+                {% else %}
+                    <!-- default -->
+                    <label for="passwordReg">{{registerForm.passwordReg.label}}</label>
+                    {{registerForm.passwordReg(placeholder="Password", id="passwordReg")}}
+                {% endif %}
+
+                <!-- register form link -->
+                <a href="/">Already have an account?</a>
+
+                <button type="submit" form="reg">Create account</button>
+            </form>
+        </div>
+
+
+        <!-- default content without register form -->
+        <div class="index-wrapper">
+            <main>
+                <!-- description -->
+                <section>
+                    <div>
+                        <h1>Cliq</h1>
+                        <p>
+                            Welcome to Cliq, a platform for expressing and sharing your interests. Create an account to get started or log in if you already have one. Enjoy!
+                        </p>
+                    </div>
+                </section>
+
+                <!-- login form -->
+                <div>
+                    <form action="/login" method="POST" id="log" novalidate>
+                        {{loginForm.csrf_token(id="login-token")}}
+                        <h2>Log in</h2>
+
+                        {% with invalidCredentials = get_flashed_messages(category_filter=['invalidCredentials']) %}
+                            {% if invalidCredentials %}
+
+                                <label for="usernameLog">{{loginForm.usernameLog.label}}</label>
+                                {{loginForm.usernameLog(placeholder="Username", id="usernameLog", style="border: 1.5px solid red; margin-bottom: 1em;")}}
+
+                                <label for="passwordLog">{{loginForm.passwordLog.label}}</label>
+                                {{loginForm.passwordLog(placeholder="Password", id="passwordLog", style="border: 1.5px solid red; margin-bottom: 5px;")}}
+
+                                <span style="color: red; margin-bottom: 10px;">{{invalidCredentials[0]}}</span>
+
+                            {% else %}
+
+                                {% if loginUsernameError %}
+                                    <!-- displays error message(s) & red border -->
+                                    <label for="usernameLog">{{loginForm.usernameLog.label}}</label>
+                                    {{loginForm.usernameLog(placeholder="Username", id="usernameLog", style="border: 1.5px solid red; margin-bottom: 5px;")}}
+                                    <span style="color: red; margin-bottom: 10px;">{{loginUsernameError}}</span>
+                                {% else %}
+                                    <!-- default -->
+                                    <label for="usernameLog">{{loginForm.usernameLog.label}}</label>
+                                    {{loginForm.usernameLog(placeholder="Username", id="usernameLog")}}
+                                {% endif %}
+
+                                {% if loginPasswordError %}
+                                    <!-- displays error message(s) & red border -->
+                                    <label for="passwordLog">{{loginForm.passwordLog.label}}</label>
+                                    {{loginForm.passwordLog(placeholder="Password", id="passwordLog", style="border: 1.5px solid red; margin-bottom: 5px;")}}
+                                    <span style="color: red; margin-bottom: 10px;">{{loginPasswordError}}</span>
+                                {% else %}
+                                    <!-- default -->
+                                    <label for="passwordLog">{{loginForm.passwordLog.label}}</label>
+                                    {{loginForm.passwordLog(placeholder="Password", id="passwordLog")}}
+                                {% endif %}
+
+                            {% endif %}
+                        {% endwith %}
+
+                        <!-- login form links -->
+                        <a href="#">Forgot your password?</a>
+
+                        {% if invalidSubmissionFlag %}
+                            <!-- this allows the login form's sign-up option to work even after the class, that keeps the form active after a failed submission, is re-toggled (without this fix, the re-toggling messes up the link of the sign-up option) -->
+                            <p>Don't have an account? <span onclick="enableRegisterForm()">Sign up</span></p>
+                        {% else %}
+                            <!-- default -->
+                            <p>Don't have an account? <span onclick="registerForm()">Sign up</span></p>
+                        {% endif %}
+        
+                        <button type="submit" form="log">Login</button>
+                    </form>
+                </div>
+            </main>
+
+            <footer>
+                Copyright &copy; 2021 Andrew J. Caumban. All rights reserved.
+            </footer>
+        </div>
+
+
+
+        <!-- JAVASCRIPT -->
+
+        {% if invalidSubmissionFlag %}
+            <!-- replaces the default script when form fails -->
+            <script>
+                const register_form_container = document.querySelector('.bg-effect');
+                register_form_container.classList.toggle('active') // this is automatically triggered when the form fails validation (i.e. it instantly sets the 'active' class back on the register form after the submission reloads the page)
+
+                function disableRegisterForm() {
+                    register_form_container.classList.toggle('active')
+                }
+
+                function enableRegisterForm() {
+                    register_form_container.classList.toggle('active')
+                }
+            </script>
+        {% else %}
+            <!-- default -->
+            <script src="{{url_for('static', filename='app.js')}}"></script>
+        {% endif %}
+    </body>
+{% endblock %}
