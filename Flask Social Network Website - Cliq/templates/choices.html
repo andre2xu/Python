@@ -1,0 +1,133 @@
+{% extends 'layout.html' %}
+
+<!-- head -->
+{% block title %}Pick a clique{% endblock %}
+
+<!-- body -->
+{% block body %}
+    <body class="body-bg-theme">
+        <!-- confirmation background dimming effect -->
+        <div class="bg-effect-container"></div>
+
+        <div class="choices-wrapper">
+            <!-- confirmation alert -->
+            <div class="confirm-box">
+                <h1>Confirm Selection</h1>
+                <strong>Are you sure? This can't be changed.</strong>
+                <div class="confirm-box-buttons">
+                    <button onclick="confirmSelection(true)">Yes</button>
+                    <button onclick="confirmSelection(false)">No</button>
+                </div>
+            </div>
+
+            <!-- description -->
+            <h1>What's your page going to be about?</h1>
+            <p>
+                A clique determines how your profile page is going to be laid out and what type of content you'll be able to put in it, <em>once you select one you won't be able to change it</em> so choose carefully! Tap or click on the cards to turn them over and then hit select when you're ready. <a href="#">Click here to see the different layouts.</a>
+            </p>
+
+            <!-- clique choices -->
+            <div class="cards-wrapper">
+                <!-- clique 1 -->
+                <div class="clique-card clique1">
+                    <div class="clique-card-front">
+                        <div class="clique-card-front-overlay"></div>
+                        <p>
+                            If you like voicing your own opinions on political and non-political issues affecting the world today, or hearing other people's thoughts about certain topics, then maybe this option is for you. This clique allows you to post blogs, share stories, post updates about yourself or your interests, and even read the news so that you can stay up to date with what's happening around the world!
+                        </p>
+                    </div>
+                    <div class="clique-card-back">
+                        <section>
+                            <h2>&#10004;</h2>
+                            <ul>
+                                <li>Can post large bodies of text.</li>
+                                <li>Can attach certain files to posts.</li>
+                                <li>Can rate posts & accumulate ratings to appear high in searches <span style="color: orange;">[ WORK IN PROGRESS ]</span>.</li>
+                            </ul>
+
+                            <h2>&#10008;</h2>
+                            <ul>
+                                <li>Cannot post videos.</li>
+                                <li>Cannot upload or download .pdf or .docx files.</li>
+                            </ul>
+                        </section>
+
+                        <form action="" method="POST" id="clique1">
+                            <input type="text" value="clique1" name="clique1">
+                            <button type="submit" form="clique1">Select</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- clique 2 -->
+                <div class="clique-card clique2">
+                    <div class="clique-card-front">
+                        <div class="clique-card-front-overlay"></div>
+                        <p>
+                            Are you creative? Do you want to share your talents with the world but don't know how? Don't worry! This clique gives you the ability to do just that! It is designed in a way that lets people see your work the moment they visit your profile page - perfect for attracting potential friends that share your artistic views. With this, you can post hiqh-quality pictures and videos for all to see.
+                        </p>
+                    </div>
+                    <div class="clique-card-back">
+                        <section>
+                            <h2>&#10004;</h2>
+                            <ul>
+                                <li>Can upload videos as well as images.</li>
+                                <li>Can add captions to posts.</li>
+                                <li>Can like other posts and receive likes to make own content appear in the trending page <span style="color: orange;">[ WORK IN PROGRESS ]</span>.</li>
+                            </ul>
+
+                            <h2>&#10008;</h2>
+                            <ul>
+                                <li>Can only post images & videos.</li>
+                                <li>Restricted to short captions.</li>
+                                <li>Cannot upload or download .pdf or .docx files.</li>
+                            </ul>
+                        </section>
+
+                        <form action="" method="POST" id="clique2">
+                            <input type="text" value="clique2" name="clique2">
+                            <button type="submit" form="clique2">Select</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- clique 3 (UNAVAILABLE AS OF DATE) -->
+                <div class="clique-card clique3">
+                    <div class="clique-card-front">
+                        <div class="clique-card-front-overlay"></div>
+                        <p>
+                            If you're interested in finding a job and are struggling to do so with other platforms on the internet then you should definitely try this clique. It's no different to an online portfolio where you show off your skills and experience to recruiters. This clique can be used to advertise your business too, or for sharing ideas and tips to making a successful company.
+                        </p>
+                    </div>
+                    <div class="clique-card-back">
+                        <section>
+                            <h2>&#10004;</h2>
+                            <ul>
+                                <li>Can post medium-sized bodies of text.</li>
+                                <li>Can attach any file to posts.</li>
+                                <li>Can upload both images and videos.</li>
+                                <li>Can upload and showcase CVs and Resumes.</li>
+                            </ul>
+
+                            <h2>&#10008;</h2>
+                            <ul>
+                                <li>Requires a 6-month subscription.</li>
+                                <li><span style="color: red; font-weight: bold;">*** NOT AVAILABLE YET ***</span></li>
+                            </ul>
+                        </section>
+
+                        <form action="#unavailable" method="POST" id="clique3">
+                            <input type="text" value="clique3" name="clique3">
+                            <button type="submit" form="clique3">Select</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- JAVASCRIPT -->
+        <script src="{{url_for('static', filename='app.js')}}"></script>
+    </body>
+{% endblock %}
