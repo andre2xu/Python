@@ -16,3 +16,4 @@ The website is called Cliq. It is a social networking platform that allows users
 - There is an RSS feed in one of the cliques which displays news around the world in real time (**DISCLAIMER: I DID NOT make the JavaScript for it, the credit belongs to https://surfing-waves.com**).
 - Only viewers who have registered and are currently logged in can like or rate someone's post. The liking/rating system also uses AJAX to make the necessary changes.
 - The database I used for the website is SQLite which comes with Flask. All the tables can be found in the schema provided.
+- All SVG Icons belong to https://fontawesome.com/ and are licensed under MIT, SIL OFL, and CC BY licenses.
