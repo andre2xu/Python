@@ -1,0 +1,290 @@
+{% extends 'profile-layout.html' %}
+
+<!-- body -->
+{% block body %}
+    <body class="clique2-profile-bg">
+        <!-- nav -->
+        <nav>
+            <ul>
+                <li><a href="/profile-clique2/{{userData['username']}}">Dashboard</a></li>
+                <li><a href="#">Trending</a></li>
+
+                <!-- this changes the navigation button at the top right of the header depending on whether the user that's currently viewing is logged in to their account or not -->
+                {% if 'verified_username' in session %}
+                    <li id="clique2-logout-btn"><a href="/profile-{{session['clique']}}/{{session['verified_username']}}">Return</a></li>
+                {% else %}
+                    <li id="clique2-logout-btn"><a href="/">Login</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+
+        <!-- main body -->
+        <div class="clique2-profile-wrapper">
+            <header>
+                <!-- displays the cover set by the user -->
+                {% if userData['cover'] %}
+                    <img id="clique2-cover" src="/static/images/cover/{{userData['cover']}}" alt="Profile Cover">
+                {% endif %}
+
+                <section>
+                    <!-- loads the user's custom profile picture if they have one, and the default if they don't -->
+                    {% if userData['pfp'] %}
+                        <img id="clique2-pfp" src="/static/images/pfp/{{userData['pfp']}}" alt="Profile Picture">
+                    {% else %}
+                        <img id="clique2-pfp" src="/static/images/pfp/$default_pfp.png" alt="Profile Picture">
+                    {% endif %}
+
+                    <div class="user-info">
+                        {% if userData['name'] %}
+                            <h1>{{userData['name']}}</h1>
+                        {% endif %}
+
+                        {% if userData['niche'] %}
+                            <span>{{userData['niche']}}</span>
+                        {% endif %}
+
+                        {% if userData['bio'] %}
+                            <p>{{userData['bio']}}</p>
+                        {% else %}
+                            <p>Hi, I am {{userData['username']}}!</p>
+                        {% endif %}
+
+                        <span id="clique2-join-date">Joined: {{userData['joined']}}</span>
+                    </div>
+                </section>
+
+                <!-- the dimensions of the cover are only displayed to the user if they don't have one -->
+                {% if not(userData['cover']) %}
+                    <small>WxH: 1500px x 400px</small>
+                {% endif %}
+            </header>
+
+            <!-- this is the second nav found below the cover -->
+            <div class="clique2-extra-nav">
+                <!-- searchbar -->
+                <div class="clique2-searchbar-container">
+                    <form action="" method="POST">
+                        <input type="text" placeholder="Search username..." name="clique2-searchbar" id="clique2-searchbar">
+                        <button>
+                            <img src="/static/icons/search1.svg">
+                        </button>
+                    </form>
+                    <ul id="clique2-search-suggestions"></ul>
+                </div>
+
+                <ul class="clique2-pic-vid">
+                    <!-- displays the unfollow button when the viewer is following the user (flag is set to true), by default the follow button is the one displayed -->
+                    {% if 'verified_username' in session and not(isFollowing) %}
+                        <li><a href="/profile-clique2-view/{{userData['username']}}/being-followed-by-{{session['verified_username']}}">Follow</a></li>
+                    {% elif 'verified_username' in session and isFollowing %}
+                        <li><a href="/profile-clique2-view/{{userData['username']}}/unfollowed-by-{{session['verified_username']}}">Unfollow</a></li>
+                    {% else %}
+                        <li><a href="#" style="visibility: hidden;"></a></li>
+                    {% endif %}
+
+                    <li><a href="#">Followers: {{followersCount}}</a></li>
+                </ul>
+            </div>
+
+            <!-- user posts -->
+            <main>
+                <div class="clique2-posts" id="clique2-posts">
+                    <!-- this ensures that the footer stays at the bottom of the page (without this it would be floating in the middle) -->
+                    {% if postsDataSet == [] %}
+                        <div style="visibility: hidden;"><figure><img></figure></div>
+                    {% endif %}
+
+                    <!-- this loads all the user's posts -->
+                    {% for posts in postsDataSet %}
+                        <!-- this variable is used in javascript below, under the 'like_post' function, to keep track of which posts the viewer is liking -->
+                        {% set post_id = posts['id'] %}
+
+                        {% if posts['colgroup'] == 1 %}
+                            <!-- colgroup 1 -->
+                            <div>
+
+                                <figure>
+                                    {% if posts['file_type'] == 'img' %}
+                                        <img src="/static/images/posts/{{posts['file']}}">
+                                    {% elif posts['file_type'] == 'vid' %}
+                                        <video src="/static/files/{{posts['file']}}" controls controlsList="nodownload"></video>
+                                    {% endif %}
+
+                                    <div>
+                                        <span>Likes: {{posts['likes']}}</span>
+                                        <a href="/profile-clique2/{{userData['username']}}/post-delete-{{posts['id']}}" style="text-decoration: none;">
+                                            <!-- allows only logged in viewers to rate the post -->
+                                            {% if 'verified_username' in session %}
+                                                <!-- checks whether this post has been liked by the viewer or not; if so, the thumbs up will have a colour, otherwise, it will not -->
+                                                {% if posts['id'] in likedPostsDataSet %}
+                                                    <svg title="Like post" onclick="like_post('{{post_id | safe}}'); return false;" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="thumbs-up" class="svg-inline--fa fa-thumbs-up fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#418AD9" d="M104 224H24c-13.255 0-24 10.745-24 24v240c0 13.255 10.745 24 24 24h80c13.255 0 24-10.745 24-24V248c0-13.255-10.745-24-24-24zM64 472c-13.255 0-24-10.745-24-24s10.745-24 24-24 24 10.745 24 24-10.745 24-24 24zM384 81.452c0 42.416-25.97 66.208-33.277 94.548h101.723c33.397 0 59.397 27.746 59.553 58.098.084 17.938-7.546 37.249-19.439 49.197l-.11.11c9.836 23.337 8.237 56.037-9.308 79.469 8.681 25.895-.069 57.704-16.382 74.757 4.298 17.598 2.244 32.575-6.148 44.632C440.202 511.587 389.616 512 346.839 512l-2.845-.001c-48.287-.017-87.806-17.598-119.56-31.725-15.957-7.099-36.821-15.887-52.651-16.178-6.54-.12-11.783-5.457-11.783-11.998v-213.77c0-3.2 1.282-6.271 3.558-8.521 39.614-39.144 56.648-80.587 89.117-113.111 14.804-14.832 20.188-37.236 25.393-58.902C282.515 39.293 291.817 0 312 0c24 0 72 8 72 81.452z"></path></svg>
+                                                {% else %}
+                                                    <img src="/static/icons/thumbs-up-solid.svg" title="Like post" onclick="like_post('{{post_id | safe}}'); return false;">
+                                                {% endif %}
+                                            {% endif %}
+                                        </a>
+                                    </div>
+
+                                    {% if posts['caption'] %}
+                                        <figcaption>{{posts['caption']}}</figcaption>
+                                    {% endif %}
+                                </figure>
+
+                            </div>
+
+
+                        {% elif posts['colgroup'] == 2 %}
+                            <!-- colgroup 2 -->
+                            <div>
+
+                                <figure>
+                                    {% if posts['file_type'] == 'img' %}
+                                        <img src="/static/images/posts/{{posts['file']}}">
+                                    {% elif posts['file_type'] == 'vid' %}
+                                        <video src="/static/files/{{posts['file']}}" controls controlsList="nodownload"></video>
+                                    {% endif %}
+
+                                    <div>
+                                        <span>Likes: {{posts['likes']}}</span>
+                                        <a href="/profile-clique2/{{userData['username']}}/post-delete-{{posts['id']}}" style="text-decoration: none;">
+                                            {% if 'verified_username' in session %}
+                                                {% if posts['id'] in likedPostsDataSet %}
+                                                    <svg title="Like post" onclick="like_post('{{post_id | safe}}'); return false;" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="thumbs-up" class="svg-inline--fa fa-thumbs-up fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#418AD9" d="M104 224H24c-13.255 0-24 10.745-24 24v240c0 13.255 10.745 24 24 24h80c13.255 0 24-10.745 24-24V248c0-13.255-10.745-24-24-24zM64 472c-13.255 0-24-10.745-24-24s10.745-24 24-24 24 10.745 24 24-10.745 24-24 24zM384 81.452c0 42.416-25.97 66.208-33.277 94.548h101.723c33.397 0 59.397 27.746 59.553 58.098.084 17.938-7.546 37.249-19.439 49.197l-.11.11c9.836 23.337 8.237 56.037-9.308 79.469 8.681 25.895-.069 57.704-16.382 74.757 4.298 17.598 2.244 32.575-6.148 44.632C440.202 511.587 389.616 512 346.839 512l-2.845-.001c-48.287-.017-87.806-17.598-119.56-31.725-15.957-7.099-36.821-15.887-52.651-16.178-6.54-.12-11.783-5.457-11.783-11.998v-213.77c0-3.2 1.282-6.271 3.558-8.521 39.614-39.144 56.648-80.587 89.117-113.111 14.804-14.832 20.188-37.236 25.393-58.902C282.515 39.293 291.817 0 312 0c24 0 72 8 72 81.452z"></path></svg>
+                                                {% else %}
+                                                    <img src="/static/icons/thumbs-up-solid.svg" title="Like post" onclick="like_post('{{post_id | safe}}'); return false;">
+                                                {% endif %}
+                                            {% endif %}
+                                        </a>
+                                    </div>
+
+                                    {% if posts['caption'] %}
+                                        <figcaption>{{posts['caption']}}</figcaption>
+                                    {% endif %}
+                                </figure>
+
+                            </div>
+
+
+                        {% elif posts['colgroup'] == 3 %}
+                            <!-- colgroup 3 -->
+                            <div>
+
+                                <figure>
+                                    {% if posts['file_type'] == 'img' %}
+                                        <img src="/static/images/posts/{{posts['file']}}">
+                                    {% elif posts['file_type'] == 'vid' %}
+                                        <video src="/static/files/{{posts['file']}}" controls controlsList="nodownload"></video>
+                                    {% endif %}
+
+                                    <div>
+                                        <span>Likes: {{posts['likes']}}</span>
+                                        <a href="/profile-clique2/{{userData['username']}}/post-delete-{{posts['id']}}" style="text-decoration: none;">
+                                            {% if 'verified_username' in session %}
+                                                {% if posts['id'] in likedPostsDataSet %}
+                                                    <svg title="Like post" onclick="like_post('{{post_id | safe}}'); return false;" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="thumbs-up" class="svg-inline--fa fa-thumbs-up fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#418AD9" d="M104 224H24c-13.255 0-24 10.745-24 24v240c0 13.255 10.745 24 24 24h80c13.255 0 24-10.745 24-24V248c0-13.255-10.745-24-24-24zM64 472c-13.255 0-24-10.745-24-24s10.745-24 24-24 24 10.745 24 24-10.745 24-24 24zM384 81.452c0 42.416-25.97 66.208-33.277 94.548h101.723c33.397 0 59.397 27.746 59.553 58.098.084 17.938-7.546 37.249-19.439 49.197l-.11.11c9.836 23.337 8.237 56.037-9.308 79.469 8.681 25.895-.069 57.704-16.382 74.757 4.298 17.598 2.244 32.575-6.148 44.632C440.202 511.587 389.616 512 346.839 512l-2.845-.001c-48.287-.017-87.806-17.598-119.56-31.725-15.957-7.099-36.821-15.887-52.651-16.178-6.54-.12-11.783-5.457-11.783-11.998v-213.77c0-3.2 1.282-6.271 3.558-8.521 39.614-39.144 56.648-80.587 89.117-113.111 14.804-14.832 20.188-37.236 25.393-58.902C282.515 39.293 291.817 0 312 0c24 0 72 8 72 81.452z"></path></svg>
+                                                {% else %}
+                                                    <img src="/static/icons/thumbs-up-solid.svg" title="Like post" onclick="like_post('{{post_id | safe}}'); return false;">
+                                                {% endif %}
+                                            {% endif %}
+                                        </a>
+                                    </div>
+
+                                    {% if posts['caption'] %}
+                                        <figcaption>{{posts['caption']}}</figcaption>
+                                    {% endif %}
+                                </figure>
+
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </main>
+
+            <!-- this loads all the user's website URLs. **The double slash prefixed in the href attribute allows the link to take the viewer to the desired webpage regardless of HOW THE LINK WAS TYPED by the user. For more info, see 'db.py'** -->
+            <footer>
+                <ul>
+                    {% for upblData in upblDataSet %}
+                        <li><a href="//{{upblData['url']}}" target="_blank">{{upblData['url']}}</a></li>
+                    {% endfor %}
+                </ul>
+            </footer>
+        </div>
+
+
+
+        <!-- JAVASCRIPT -->
+
+        {% if invalidSubmissionFlag %}
+            <script>
+                const clique2_post_window = document.getElementById('clique2-post-upload');
+                clique2_post_window.classList.toggle('active');
+
+                function clique2_post() {
+                    clique2_post_window.classList.toggle('active');
+                }
+            </script>
+        {% else %}
+            <script src="{{url_for('static', filename='app.js')}}"></script>
+        {% endif %}
+
+        <script src="{{url_for('static', filename='jquery-3.6.0.min.js')}}"></script>
+
+        <script>
+            const clique2_searchbar = document.getElementById('clique2-searchbar');
+            const clique2_search_suggestions = document.getElementById('clique2-search-suggestions');
+
+            clique2_searchbar.addEventListener('keyup', () => {
+                setTimeout(() => {
+                    clique2_search_suggestions.innerHTML = '';
+                }, 10)
+                
+                if (clique2_searchbar.value) {
+                    let search_input = clique2_searchbar.value;
+
+                    let xhr = new XMLHttpRequest()
+                    xhr.open('POST', '/profile-search-clique2');
+                    xhr.setRequestHeader('Content-type', 'application/json');
+                    xhr.send(JSON.stringify({'search_query':search_input}));
+
+                    xhr.onload = () => {
+                        let search_results = xhr.response;
+                        parsed_search_results = JSON.parse(search_results);
+
+                        parsed_search_results.forEach((user) => {
+                            let new_li = document.createElement('li');
+                            let new_a = document.createElement('a');
+                            let result = document.createTextNode(user[0]);
+                            new_a.setAttribute('href', `/profile-${user[1]}-view/${user[0]}`);
+                            
+                            new_a.appendChild(result);
+                            new_li.appendChild(new_a);
+                            clique2_search_suggestions.appendChild(new_li);
+                        })
+                    }
+                }
+            })
+        </script>
+
+        <script>
+            function like_post(post_id) {
+                let xhr = new XMLHttpRequest();
+                let encoded_owner_username = encodeURIComponent('{{userData["username"]}}');
+                let encoded_viewer_username = encodeURIComponent('{{session["verified_username"]}}');
+                let encoded_post_id = encodeURIComponent(post_id);
+
+                xhr.open('GET', `/profile-clique2-view/${encoded_owner_username}/${encoded_viewer_username}-likes-${encoded_post_id}`);
+                xhr.send();
+
+                xhr.onload = () => {
+                    let isLikedFlag = xhr.response;
+
+                    if (isLikedFlag == 1) {
+                        $('#clique2-posts').load(document.URL +  ' #clique2-posts');
+                    } else if (isLikedFlag == 0) {
+                        $('#clique2-posts').load(document.URL +  ' #clique2-posts');
+                    }
+                }
+            }
+        </script>
+    </body>
+{% endblock %}
