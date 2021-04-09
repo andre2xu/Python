@@ -1,0 +1,247 @@
+{% extends 'profile-layout.html' %}
+
+<!-- body -->
+{% block body %}
+    <body class="clique2-profile-bg">
+        <!-- post form -->
+        <form action="../run.py/profile-clique2/{{userData['username']}}/post-upload" method="POST" class="clique2-post-upload" id="clique2-post-upload" enctype="multipart/form-data">
+        {{c2Form.hidden_tag()}}
+            <span onclick="clique2_post()">cancel</span>
+            <input type="file" name="post_pic_or_vid" required>
+                {{c2Form.caption(id="post_caption", placeholder="Brief description")}}
+                
+                {% with invalidCaption = get_flashed_messages(category_filter=['invalidCaption'])%}
+                    {% if invalidCaption %}
+                        <p>{{invalidCaption[0]}}</p>
+                    {% endif %}
+                {% endwith %}
+            <button form="clique2-post-upload">Upload</button>
+        </form>
+
+        <!-- nav -->
+        <nav>
+            <ul>
+                <li><a href="/profile-clique2/{{userData['username']}}">Dashboard</a></li>
+                <li><a href="#">Trending</a></li>
+                <li><a href="/profile-settings-myaccount/{{userData['username']}}">My Account</a></li>
+                <li id="clique2-logout-btn"><a href="/logout">Logout</a></li>
+            </ul>
+        </nav>
+
+        <!-- main body -->
+        <div class="clique2-profile-wrapper">
+            <header>
+                <!-- displays the cover set by the user -->
+                {% if userData['cover'] %}
+                    <img id="clique2-cover" src="/static/images/cover/{{userData['cover']}}" alt="Profile Cover">
+                {% endif %}
+
+                <section>
+                    <!-- loads the user's custom profile picture if they have one, and the default if they don't -->
+                    {% if userData['pfp'] %}
+                        <img id="clique2-pfp" src="/static/images/pfp/{{userData['pfp']}}" alt="Profile Picture">
+                    {% else %}
+                        <img id="clique2-pfp" src="/static/images/pfp/$default_pfp.png" alt="Profile Picture">
+                    {% endif %}
+
+                    <div class="user-info">
+                        {% if userData['name'] %}
+                            <h1>{{userData['name']}}</h1>
+                        {% endif %}
+
+                        {% if userData['niche'] %}
+                            <span>{{userData['niche']}}</span>
+                        {% endif %}
+
+                        {% if userData['bio'] %}
+                            <p>{{userData['bio']}}</p>
+                        {% else %}
+                            <p>Hi, I am {{userData['username']}}!</p>
+                        {% endif %}
+
+                        <span id="clique2-join-date">Joined: {{userData['joined']}}</span>
+                    </div>
+                </section>
+
+                <!-- the dimensions of the cover are only displayed to the user if they don't have one -->
+                {% if not(userData['cover']) %}
+                    <small>WxH: 1500px x 400px</small>
+                {% endif %}
+            </header>
+
+            <!-- this is the second nav found below the cover -->
+            <div class="clique2-extra-nav">
+                <!-- searchbar -->
+                <div class="clique2-searchbar-container">
+                    <form action="" method="POST">
+                        <input type="text" placeholder="Search username..." name="clique2-searchbar" id="clique2-searchbar">
+                        <button>
+                            <img src="/static/icons/search1.svg">
+                        </button>
+                    </form>
+                    <ul id="clique2-search-suggestions"></ul>
+                </div>
+
+                <ul class="clique2-pic-vid">
+                    <li><a href="#" onclick="clique2_post()">Upload</a></li>
+                    <li><a href="#">Followers: {{followersCount}}</a></li>
+                </ul>
+            </div>
+
+            <!-- user posts -->
+            <main>
+                <div class="clique2-posts">
+                    <!-- this ensures that the footer stays at the bottom of the page (without this it would be floating in the middle) -->
+                    {% if postsDataSet == [] %}
+                        <div style="visibility: hidden;"><figure><img></figure></div>
+                    {% endif %}
+
+                    <!-- this loads all the user's posts -->
+                    {% for posts in postsDataSet %}
+                        {% if posts['colgroup'] == 1 %}
+                            <!-- colgroup 1 -->
+                            <div>
+
+                                <figure>
+                                    {% if posts['file_type'] == 'img' %}
+                                        <img src="/static/images/posts/{{posts['file']}}">
+                                    {% elif posts['file_type'] == 'vid' %}
+                                        <video src="/static/files/{{posts['file']}}" controls controlsList="nodownload"></video>
+                                    {% endif %}
+
+                                    <div>
+                                        <span>Likes: {{posts['likes']}}</span>
+                                        <a href="/profile-clique2/{{userData['username']}}/post-delete-{{posts['id']}}" style="text-decoration: none;">
+                                            <img src="/static/icons/trash-alt-solid.svg" title="Delete post">
+                                        </a>
+                                    </div>
+
+                                    {% if posts['caption'] %}
+                                        <figcaption>{{posts['caption']}}</figcaption>
+                                    {% endif %}
+                                </figure>
+
+                            </div>
+
+
+                        {% elif posts['colgroup'] == 2 %}
+                            <!-- colgroup 2 -->
+                            <div>
+
+                                <figure>
+                                    {% if posts['file_type'] == 'img' %}
+                                        <img src="/static/images/posts/{{posts['file']}}">
+                                    {% elif posts['file_type'] == 'vid' %}
+                                        <video src="/static/files/{{posts['file']}}" controls controlsList="nodownload"></video>
+                                    {% endif %}
+
+                                    <div>
+                                        <span>Likes: {{posts['likes']}}</span>
+                                        <a href="/profile-clique2/{{userData['username']}}/post-delete-{{posts['id']}}" style="text-decoration: none;">
+                                            <img src="/static/icons/trash-alt-solid.svg" title="Delete post">
+                                        </a>
+                                    </div>
+
+                                    {% if posts['caption'] %}
+                                        <figcaption>{{posts['caption']}}</figcaption>
+                                    {% endif %}
+                                </figure>
+
+                            </div>
+
+
+                        {% elif posts['colgroup'] == 3 %}
+                            <!-- colgroup 3 -->
+                            <div>
+
+                                <figure>
+                                    {% if posts['file_type'] == 'img' %}
+                                        <img src="/static/images/posts/{{posts['file']}}">
+                                    {% elif posts['file_type'] == 'vid' %}
+                                        <video src="/static/files/{{posts['file']}}" controls controlsList="nodownload"></video>
+                                    {% endif %}
+
+                                    <div>
+                                        <span>Likes: {{posts['likes']}}</span>
+                                        <a href="/profile-clique2/{{userData['username']}}/post-delete-{{posts['id']}}" style="text-decoration: none;">
+                                            <img src="/static/icons/trash-alt-solid.svg" title="Delete post">
+                                        </a>
+                                    </div>
+
+                                    {% if posts['caption'] %}
+                                        <figcaption>{{posts['caption']}}</figcaption>
+                                    {% endif %}
+                                </figure>
+
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </main>
+
+            <!-- this loads all the user's website URLs. **The double slash prefixed in the href attribute allows the link to take the viewer to the desired webpage regardless of HOW THE LINK WAS TYPED by the user. For more info, see 'db.py'** -->
+            <footer>
+                <ul>
+                    {% for upblData in upblDataSet %}
+                        <li><a href="//{{upblData['url']}}" target="_blank">{{upblData['url']}}</a></li>
+                    {% endfor %}
+                </ul>
+            </footer>
+        </div>
+
+
+
+        <!-- JAVASCRIPT -->
+
+        {% if invalidSubmissionFlag %}
+            <script>
+                const clique2_post_window = document.getElementById('clique2-post-upload');
+                clique2_post_window.classList.toggle('active');
+
+                function clique2_post() {
+                    clique2_post_window.classList.toggle('active');
+                }
+            </script>
+        {% else %}
+            <script src="{{url_for('static', filename='app.js')}}"></script>
+        {% endif %}
+
+        <script src="{{url_for('static', filename='jquery-3.6.0.min.js')}}"></script>
+
+        <script>
+            const clique2_searchbar = document.getElementById('clique2-searchbar');
+            const clique2_search_suggestions = document.getElementById('clique2-search-suggestions');
+
+            clique2_searchbar.addEventListener('keyup', () => {
+                setTimeout(() => {
+                    clique2_search_suggestions.innerHTML = '';
+                }, 10)
+                
+                if (clique2_searchbar.value) {
+                    let search_input = clique2_searchbar.value;
+
+                    let xhr = new XMLHttpRequest()
+                    xhr.open('POST', '/profile-search-clique2');
+                    xhr.setRequestHeader('Content-type', 'application/json');
+                    xhr.send(JSON.stringify({'search_query':search_input}));
+
+                    xhr.onload = () => {
+                        let search_results = xhr.response;
+                        parsed_search_results = JSON.parse(search_results);
+
+                        parsed_search_results.forEach((user) => {
+                            let new_li = document.createElement('li');
+                            let new_a = document.createElement('a');
+                            let result = document.createTextNode(user[0]);
+                            new_a.setAttribute('href', `/profile-${user[1]}-view/${user[0]}`);
+                            
+                            new_a.appendChild(result);
+                            new_li.appendChild(new_a);
+                            clique2_search_suggestions.appendChild(new_li);
+                        })
+                    }
+                }
+            })
+        </script>
+    </body>
+{% endblock %}
