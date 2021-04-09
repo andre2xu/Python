@@ -1,0 +1,111 @@
+{% extends 'profile-layout.html' %}
+
+<!-- head -->
+{% block extra_title %}Settings{% endblock %}
+
+<!-- body -->
+{% block body %}
+    <body class="profile-settings-bg">
+        <!-- confirmation alert & background dimming effect -->
+        <div class="bg-delete-effect">
+            <div id="confirmDeleteBox">
+                <h1>Delete account & data?</h1>
+                <p>Are you sure you want to delete your account and any data associated with it?</p>
+                <div>
+                    <button onclick="confirmDeleteAccount(false)">No</button>
+                    <button onclick="confirmDeleteAccount(true)">Yes, delete everything</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-settings-wrapper">
+            <!-- nav -->
+            <nav>
+                <ul>
+                    <li>
+                        <a href="https://fontawesome.com/license" target="_blank">
+                            <img src="/static/icons/home-solid.svg">
+                        </a>
+                        <a href="/profile-{{userData['clique']}}/{{userData['username']}}">Dashboard</a>
+                    </li>
+                    <li>
+                        <a href="https://fontawesome.com/license" target="_blank">
+                            <img src="/static/icons/user-circle-solid.svg">
+                        </a>
+                        <a href="/profile-settings-myprofile/{{userData['username']}}">My Profile</a>
+                    </li>
+                    <li>
+                        <a href="https://fontawesome.com/license" target="_blank">
+                            <img src="/static/icons/cog-solid.svg">
+                        </a>
+                        <a href="/profile-settings-myaccount/{{userData['username']}}">My Account</a>
+                    </li>
+                </ul>
+
+                <div id="profile-settings-logout">
+                    <a href="/logout">Logout</a>
+                    <a href="https://fontawesome.com/license" target="_blank">
+                        <img src="/static/icons/sign-out-alt-solid.svg">
+                    </a>
+                </div>
+            </nav>
+
+            <!-- main body -->
+            <main class="profile-settings-myaccount-main">
+                <section>
+                    <h1>My Account</h1>
+
+                    <form action="" method="POST">
+                    {{myaccountForm.hidden_tag()}}
+                        <label for="username">{{myaccountForm.change_username.label}}</label>
+                        {{myaccountForm.change_username(id="username", placeholder="Enter new username")}}
+                        {% if myaccountNewUsernameError %}
+                            <span class="settings-errors">{{myaccountNewUsernameError}}</span>
+                        {% endif %}
+
+                        <label for="password" style="margin-top: 1.5em;">{{myaccountForm.change_password.label}}</label>
+                        {{myaccountForm.change_password(id="password", placeholder="Enter new password")}}
+                        {% if myaccountNewPasswordError %}
+                            <span class="settings-errors">{{myaccountNewPasswordError}}</span>
+                        {% endif %}
+
+                        <label for="confirm-password" style="margin-top: 1.5em;">{{myaccountForm.confirm_password.label}}</label>
+                        {{myaccountForm.confirm_password(id="confirm-password", placeholder="Confirm new password")}}
+                        {% if myaccountConfirmPasswordError %}
+                            <span class="settings-errors">{{myaccountConfirmPasswordError}}</span>
+                        {% endif %}
+
+                        <span id="delete-account-option">Delete account</span>
+
+                        <button type="submit">Save</button>
+                    </form>
+                </section>
+            </main>
+        </div>
+
+
+
+        <!-- JAVASCRIPT -->
+
+        <script src="{{url_for('static', filename='app.js')}}"></script>
+
+        <script>
+            const delete_account = document.getElementsByClassName('bg-delete-effect')[0];
+            const delete_account_button = document.getElementById('delete-account-option');
+
+            if (delete_account_button !== null && delete_account !== null) {
+                delete_account_button.addEventListener('click', () => {
+                    delete_account.classList.add('active');
+                })
+            }
+
+            function confirmDeleteAccount(answer) {
+                if (answer) {
+                    location.href = "/profile-{{userData['clique']}}/delete-account-{{userData['username'] | safe}}";
+                } else if (!answer) {
+                    delete_account.classList.remove('active');
+                }
+            }
+        </script>
+    </body>
+{% endblock %}
