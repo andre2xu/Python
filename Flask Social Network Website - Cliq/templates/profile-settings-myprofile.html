@@ -1,0 +1,159 @@
+{% extends 'profile-layout.html' %}
+
+<!-- head -->
+{% block extra_title %}Settings{% endblock %}
+
+<!-- body -->
+{% block body %}
+    <body class="profile-settings-bg">
+        <div class="profile-settings-wrapper">
+            <!-- nav -->
+            <nav>
+                <ul>
+                    <li>
+                        <a href="https://fontawesome.com/license" target="_blank">
+                            <img src="/static/icons/home-solid.svg">
+                        </a>
+                        <a href="/profile-{{userData['clique']}}/{{userData['username']}}">Dashboard</a>
+                    </li>
+                    <li>
+                        <a href="https://fontawesome.com/license" target="_blank">
+                            <img src="/static/icons/user-circle-solid.svg">
+                        </a>
+                        <a href="/profile-settings-myprofile/{{userData['username']}}">My Profile</a>
+                    </li>
+                    <li>
+                        <a href="https://fontawesome.com/license" target="_blank">
+                            <img src="/static/icons/cog-solid.svg">
+                        </a>
+                        <a href="/profile-settings-myaccount/{{userData['username']}}">My Account</a>
+                    </li>
+                </ul>
+        
+                <div id="profile-settings-logout">
+                    <a href="/logout">Logout</a>
+                    <a href="https://fontawesome.com/license" target="_blank">
+                        <img src="/static/icons/sign-out-alt-solid.svg">
+                    </a>
+                </div>
+            </nav>
+
+            <!-- main body -->
+            <main class="profile-settings-myprofile-main">
+                <div>
+                    <!-- loads the user's custom profile picture if they have one, and the default if they don't -->
+                    {% if userData['pfp'] %}
+                        <img src="/static/images/pfp/{{userData['pfp']}}" alt="Profile Picture">
+                    {% else %}
+                        <img src="/static/images/pfp/$default_pfp.png" alt="Profile Picture">
+                    {% endif %}
+
+                    <!-- pfp & cover upload -->
+                    <section>
+                        <h1>My Profile</h1>
+
+                        <small>
+                            NOTE: These are automatically uploaded after selection!
+                        </small>
+
+                        <div>
+                            <!-- pfp change -->
+                            <form action="/profile-settings-myprofile/{{userData['username']}}/upload" method="POST" id="pfp-form" enctype="multipart/form-data">
+                                <label for="pfp">Change avatar</label>
+                                <input type="file" name="pfp" id="pfp">
+
+                                <!-- replaces small text with a pfp removal button -->
+                                {% if userData['pfp'] %}
+                                    <a href="/profile-settings-myprofile/delete-{{userData['pfp']}}-of-{{userData['username']}}" style="text-decoration: none;">
+                                        <small id="remove-pfp">Remove profile picture</small>
+                                    </a>
+                                {% else %}
+                                    <small>200x200 px</small>
+                                {% endif %}
+                            </form>
+
+
+                            <!-- cover change -->
+                            <form action="/profile-settings-myprofile/{{userData['username']}}/upload" method="POST" id="cover-form" enctype="multipart/form-data">
+                                <label for="cover">Change cover</label>
+                                <input type="file" name="cover" id="cover">
+
+                                <!-- replaces small text with a cover removal button -->
+                                {% if userData['cover'] %}
+                                    <a href="/profile-settings-myprofile/delete-{{userData['cover']}}-of-{{userData['username']}}" style="text-decoration: none;">
+                                        <small id="remove-cover">Remove cover</small>
+                                    </a>
+                                {% else %}
+                                    <small>1500x400 px</small>
+                                {% endif %}
+                            </form>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- main form -->
+                <section>
+                    <form action="" method="POST" id="myprofile-form">
+                    {{myprofileForm.hidden_tag()}}
+                        <!-- name change -->
+                        <label for="name">{{myprofileForm.name.label}}</label>
+                        {{myprofileForm.name(id="name", placeholder="Enter new name", style="width: 70%; height: 20px;")}}
+                        {% if myprofileNameError %}
+                            <span class="settings-errors">{{myprofileNameError}}</span>
+                        {% endif %}
+
+                        <!-- niche selection -->
+                        {% if userData['clique'] == 'clique1' %}
+                            <div>
+                                <select name="niche" id="niche">
+                                    <option selected disabled>Select niche...</option>
+                                    <option value="Blogger">Blogger</option>
+                                    <option value="Activist">Activist</option>
+                                    <option value="Journalist">Journalist</option>
+                                    <option value="Author">Author</option>
+                                    <option value="Reporter">Reporter</option>
+                                    <option value="None">None</option>
+                                </select>
+                            </div>
+
+                        {% elif userData['clique'] == 'clique2' %}
+                            <div>
+                                <select name="niche" id="niche">
+                                    <option selected disabled>Select niche...</option>
+                                    <option value="Photographer">Photographer</option>
+                                    <option value="Artist">Artist</option>
+                                    <option value="Cosmetologist">Cosmetologist</option>
+                                    <option value="Barber">Barber</option>
+                                    <option value="Hairdresser">Hairdresser</option>
+                                    <option value="Entertainer">Entertainer</option>
+                                    <option value="Vlogger">Vlogger</option>
+                                    <option value="Influencer">Influencer</option>
+                                    <option value="Model">Model</option>
+                                    <option value="None">None</option>
+                                </select>
+                            </div>
+                        {% endif %}
+
+                        <!-- bio change -->
+                        <label for="bio">{{myprofileForm.bio.label}}</label>
+                        {{myprofileForm.bio(id="bio", placeholder="Describe yourself...", style="width: 70%; height: 20ch;")}}
+                        {% if myprofileBioError %}
+                            <span class="settings-errors">{{myprofileBioError}}</span>
+                        {% endif %}
+
+                        <h2>Website URL(s)</h2>
+                        <!-- this button creates 3 new input elements in the main form where the user can write their website URLs -->
+                        <div onclick="add_url()">Add URL</div>
+
+                        <button type="submit" form="myprofile-form" id="save-myprofile-form">Save</button>
+                    </form>
+                </section>
+            </main>
+        </div>
+
+
+
+        <!-- JAVASCRIPT -->
+        <script src="{{url_for('static', filename='app.js')}}"></script>
+    </body>
+{% endblock %}
